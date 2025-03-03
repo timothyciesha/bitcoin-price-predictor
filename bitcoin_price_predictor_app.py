@@ -81,7 +81,7 @@ if custom_date and pred_date:
         st.error("Prediction date must be after the latest data date!")
     else:
         next_day_pred = rf_model.predict(btc_prepared.tail(1)[[f"price_lag_{i}" for i in range(1, lookback + 1)] + ["moving_avg_14"]])[0]
-        st.markdown(f"**Predicted Price for {pred_date:%Y-%m-%d}: $<span style='font-size: 36px; color: #2ecc71;'>${next_day_pred:.2f}</span>** (Note: Based on latest data up to {latest_date:%Y-%m-%d}, not a multi-day forecast)")
+        st.markdown(f"**Predicted Price for {pred_date:%Y-%m-%d}:** <span style='font-size: 36px; color: #2ecc71;'>${next_day_pred:.2f}</span> (Note: Based on latest data up to {latest_date:%Y-%m-%d}, not a true forecast for this date)", unsafe_allow_html=True)
 else:
     days_ahead = 1
     next_day_pred = rf_model.predict(btc_prepared.tail(1)[[f"price_lag_{i}" for i in range(1, lookback + 1)] + ["moving_avg_14"]])[0]
@@ -91,7 +91,7 @@ st.write(f"**Root Mean Squared Error: ${rmse:.2f}**")
 if custom_date and pred_date:
     pass  # Note already displayed above
 else:
-    st.markdown(f"**Predicted Price for {latest_date + timedelta(days=days_ahead):%Y-%m-%d}: $<span style='font-size: 36px; color: #2ecc71;'>${next_day_pred:.2f}</span>**")
+    st.markdown(f"**Predicted Price for {latest_date + timedelta(days=days_ahead):%Y-%m-%d}:** <span style='font-size: 36px; color: #2ecc71;'>${next_day_pred:.2f}</span>", unsafe_allow_html=True)
 st.write("**Last 5 Days of Data:**")
 st.dataframe(btc_prepared[["date", "price"]].tail())
 
