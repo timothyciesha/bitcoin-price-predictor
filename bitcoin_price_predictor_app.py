@@ -80,8 +80,8 @@ if custom_date and pred_date:
     if days_ahead < 0:
         st.error("Prediction date must be after the latest data date!")
     else:
-        # For simplicity, we'll use the latest data to predict; for future dates, you'd need a time series model
         next_day_pred = rf_model.predict(btc_prepared.tail(1)[[f"price_lag_{i}" for i in range(1, lookback + 1)] + ["moving_avg_14"]])[0]
+        st.markdown(f"**Predicted Price for {pred_date:%Y-%m-%d}: $<span style='font-size: 36px; color: #2ecc71;'>${next_day_pred:.2f}</span>** (Note: Based on latest data up to {latest_date:%Y-%m-%d}, not a multi-day forecast)")
 else:
     days_ahead = 1
     next_day_pred = rf_model.predict(btc_prepared.tail(1)[[f"price_lag_{i}" for i in range(1, lookback + 1)] + ["moving_avg_14"]])[0]
@@ -89,9 +89,11 @@ else:
 # Display results
 st.write(f"**Root Mean Squared Error: ${rmse:.2f}**")
 if custom_date and pred_date:
-    st.write(f"**Predicted Price for {pred_date:%Y-%m-%d}: ${next_day_pred:.2f}** (Note: Based on latest data, not future trends)")
+    pass  # Note already displayed above
 else:
-    st.write(f"**Predicted Price for {latest_date + timedelta(days=days_ahead):%Y-%m-%d}: ${next_day_pred:.2f}**")
+    st.markdown(f"**Predicted Price for {latest_date + timedelta(days=days_ahead):%Y-%m-%d}: $<span style='font-size: 36px; color: #2ecc71;'>${next_day_pred:.2f}</span>**")
+st.write("**Last 5 Days of Data:**")
+st.dataframe(btc_prepared[["date", "price"]].tail())
 
 # Plot
 st.subheader("Actual vs Predicted Prices (Test Set)")
